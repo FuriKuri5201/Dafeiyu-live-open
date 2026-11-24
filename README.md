@@ -62,7 +62,7 @@ python -m venv .venv
 ## 📁 目录说明
 
 ```text
-dfyzb-open/
+Dafeiyu-live-open/
 ├── 一键启动.bat           # 双击直接打开桌面控制台
 ├── start.bat              # 源码运行时的首次环境初始化脚本
 ├── app.py                 # 独立桌面窗口入口（PyWebView）
