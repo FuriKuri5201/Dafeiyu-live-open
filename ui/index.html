@@ -171,7 +171,7 @@
               <div><div class="mod-name">🎵 本地曲库点歌</div><span class="mod-state" id="st-music">未启动</span></div>
               <label class="switch"><input type="checkbox" data-feature="music"><span class="slider"></span></label>
             </div>
-            <div class="mod-desc">把歌放到项目 <code>music/</code> 目录，发「点歌 歌名」即播</div>
+            <div class="mod-desc">把歌放到项目 <code>music/</code> 目录，发「点歌 歌名」即播 <button class="link-btn" onclick="openMusicDir()">📂 打开曲库</button></div>
           </div>
 
           <div class="mod-mini">
@@ -255,6 +255,7 @@
         <div class="card-head">
           <h3>🎵 本地曲库 & 采集浏览器</h3>
           <div style="display:flex;gap:8px;">
+            <button class="btn small secondary" onclick="openMusicDir()">📂 打开曲库目录</button>
             <button class="btn small secondary" onclick="scanMusic()">🔄 重新扫描曲库</button>
             <button class="btn small secondary" onclick="skipMusic()">⏭ 切歌</button>
           </div>

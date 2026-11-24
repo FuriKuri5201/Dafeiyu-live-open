@@ -76,6 +76,21 @@ def create_app(director: Director, hub: Hub) -> FastAPI:
         msg = await director.music.skip()
         return {"ok": True, "message": msg}
 
+    @app.post("/api/music/open_dir")
+    async def api_music_open_dir():
+        import os
+        from pathlib import Path
+
+        dirs = (director.cfg.get("music") or {}).get("dirs") or ["music"]
+        first = Path(str(dirs[0]))
+        target = first if first.is_absolute() else (ROOT_DIR / first)
+        target.mkdir(parents=True, exist_ok=True)
+        try:
+            os.startfile(str(target))
+            return {"ok": True, "path": str(target), "message": f"已打开曲库文件夹：{target}"}
+        except Exception as exc:
+            return JSONResponse({"ok": False, "error": str(exc)}, status_code=500)
+
     # -------------------- 测试与调试接口 --------------------
 
     @app.post("/api/test/llm")

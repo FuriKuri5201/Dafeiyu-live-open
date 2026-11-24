@@ -51,6 +51,16 @@ python -m venv .venv
 .\.venv\Scripts\python run_headless.py
 ```
 
+### 方式三：打包免 Python 绿色便携版（用于 GitHub Releases）
+
+如果你希望分发给完全没装过 Python 的用户，可直接运行内置打包脚本：
+
+```powershell
+.\build_release.ps1
+```
+
+脚本会自动打包官方嵌入式 Python 3.13 + 全部依赖，在 `dist/` 下生成 `DFYZB-Open-Win64-Portable.zip`（解压后双击 `一键启动.bat` 即可直接运行，无需安装 Python）。若安装了 Inno Setup，还可直接编译 `installer.iss` 生成 `DFYZB-OneClick-Setup.exe`。
+
 ---
 
 ## 🐟 关于直播皮套（版权说明）

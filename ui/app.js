@@ -321,6 +321,11 @@ async function sendSimGift() {
   if (r.ok) toast('🎁 已注入测试礼物');
 }
 
+async function openMusicDir() {
+  const r = await api('/api/music/open_dir', { method: 'POST' });
+  toast(r.ok ? '📂 已打开本地曲库文件夹' : ('❌ 打开失败：' + (r.error || '未知错误')));
+}
+
 async function scanMusic() {
   await saveConfig(true);
   const r = await api('/api/music/scan', { method: 'POST' });

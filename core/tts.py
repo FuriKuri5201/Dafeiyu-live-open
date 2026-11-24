@@ -24,9 +24,30 @@ class TTSEngine:
         self.cfg = cfg
         self.cache_dir = ROOT_DIR / "data" / "tts_cache"
         self.cache_dir.mkdir(parents=True, exist_ok=True)
+        self.cache_max_files = 300
+        self._synth_counter = 0
         self._lock = asyncio.Lock()
         self.speaking = False
         self._mixer_ready = False
+        self.prune_cache()
+
+    def prune_cache(self) -> int:
+        """保留最近 N 条 TTS 音频缓存，防止长时间直播撑爆硬盘。"""
+        try:
+            files = [p for p in self.cache_dir.iterdir() if p.is_file()]
+            if len(files) <= self.cache_max_files:
+                return 0
+            files.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+            removed = 0
+            for old in files[self.cache_max_files:]:
+                try:
+                    old.unlink()
+                    removed += 1
+                except OSError:
+                    pass
+            return removed
+        except Exception:
+            return 0
 
     def update_config(self, cfg: dict[str, Any]) -> None:
         self.cfg = cfg
@@ -45,6 +66,9 @@ class TTSEngine:
         return self.cache_dir / f"tts_{h}{ext}"
 
     async def synthesize(self, text: str) -> Path:
+        self._synth_counter += 1
+        if self._synth_counter % 30 == 0:
+            self.prune_cache()
         tcfg = self.cfg.get("tts") or {}
         provider = str(tcfg.get("provider") or "edge").strip().lower()
         if provider == "edge":

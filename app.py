@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import logging
 import os
+import socket
 import sys
 import threading
 import time
@@ -61,10 +62,23 @@ def wait_server(url: str, timeout: float = 10.0) -> bool:
     return False
 
 
+def pick_free_port(host: str, preferred: int, attempts: int = 20) -> int:
+    """首选端口被占用时自动顺延寻找可用端口，避免启动冲突。"""
+    for port in range(preferred, preferred + attempts):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            try:
+                s.bind((host, port))
+                return port
+            except OSError:
+                continue
+    return preferred
+
+
 def main() -> None:
     cfg = load_config()
     host = str((cfg.get("server") or {}).get("host") or "127.0.0.1")
-    port = int((cfg.get("server") or {}).get("port") or 18787)
+    preferred_port = int((cfg.get("server") or {}).get("port") or 18787)
+    port = pick_free_port(host, preferred_port)
 
     hub = Hub()
     setup_logging(hub)

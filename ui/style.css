@@ -187,6 +187,12 @@ code {
   background: var(--btn-sec); padding: 1px 5px; border-radius: 4px;
   font-family: Consolas, "JetBrains Mono", monospace; font-size: 11.5px; color: var(--text);
 }
+.link-btn {
+  border: 1px solid var(--border); background: var(--btn-sec); color: var(--text);
+  font-size: 11px; padding: 1px 6px; border-radius: 5px; cursor: pointer;
+  margin-left: 4px; vertical-align: middle;
+}
+.link-btn:hover { background: var(--btn-sec-hover); }
 
 /* 底部吸底开播条 */
 .launch-bar {
