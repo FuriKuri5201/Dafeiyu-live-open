@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>OBS AI 画室</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100%; overflow: hidden;
+    background: transparent;
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    padding: 14px;
+  }
+  .frame {
+    width: 100%; height: 100%;
+    background: rgba(12, 16, 30, 0.86);
+    border: 2px solid rgba(56, 189, 248, 0.55);
+    border-radius: 20px; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .bar {
+    padding: 12px 18px; display: flex; justify-content: space-between; align-items: center;
+    background: rgba(255,255,255,0.05); color: #f8fafc; font-size: 16px; font-weight: 700;
+  }
+  .status { color: #38bdf8; font-size: 14px; }
+  .canvas {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden; padding: 14px;
+  }
+  .canvas img {
+    max-width: 100%; max-height: 100%; border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.55);
+  }
+  .placeholder { color: #94a3b8; font-size: 20px; text-align: center; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="bar">
+    <span id="title">🎨 AI 画室 · 弹幕发「画 XXX」</span>
+    <span id="status" class="status">待命中</span>
+  </div>
+  <div id="canvas" class="canvas">
+    <div class="placeholder">暂无作品<br>观众发送「画 一只小猫」即可现场作画</div>
+  </div>
+</div>
+<script>
+const titleEl = document.getElementById('title');
+const statusEl = document.getElementById('status');
+const canvasEl = document.getElementById('canvas');
+
+function render(msg) {
+  const cur = msg.current;
+  if (!cur) return;
+  titleEl.textContent = `🎨 ${cur.user} 点画：${cur.prompt}`;
+  if (cur.status === 'drawing') {
+    statusEl.textContent = '✨ 正在绘制中...';
+  } else if (cur.status === 'done' && cur.image_url) {
+    statusEl.textContent = '✅ 已完成';
+    canvasEl.innerHTML = `<img src="${cur.image_url}?t=${Date.now()}" alt="AI画作">`;
+  } else if (cur.status === 'error') {
+    statusEl.textContent = '❌ 出图失败';
+  }
+}
+
+function connect() {
+  const ws = new WebSocket(`ws://${location.host}/ws`);
+  ws.onmessage = (ev) => {
+    try {
+      const msg = JSON.parse(ev.data);
+      if (msg.type === 'draw') render(msg);
+    } catch {}
+  };
+  ws.onclose = () => setTimeout(connect, 2000);
+}
+connect();
+</script>
+</body>
+</html>

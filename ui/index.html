@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>鲶鱼大帝之大肥鱼一键开播助手</title>
+<link rel="stylesheet" href="/ui/style.css">
+</head>
+<body>
+<div class="shell">
+  <!-- 顶部栏 -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🐟</span>
+      <div>
+        <div class="brand-title">鲶鱼大帝之大肥鱼一键开播助手</div>
+        <div class="brand-sub">填好 Key 与房间号，点一下即可开播</div>
+      </div>
+    </div>
+
+    <nav class="top-tabs">
+      <button class="tab-btn active" data-tab="home">🚀 一键开播</button>
+      <button class="tab-btn" data-tab="advanced">⚙️ 高级配置</button>
+      <button class="tab-btn" data-tab="obs">🖥️ OBS 舞台</button>
+      <button class="tab-btn" data-tab="sandbox">🧪 测试 & 日志</button>
+    </nav>
+
+    <div class="top-actions">
+      <div id="liveBadge" class="badge idle">○ 待机中</div>
+      <button id="btnSave" class="btn small secondary">💾 保存</button>
+      <button id="btnLiveTop" class="btn primary" onclick="toggleLive()">🚀 一键开播</button>
+    </div>
+  </header>
+
+  <main class="content">
+    <!-- ==================== TAB 1: 傻瓜式一键开播首屏 ==================== -->
+    <section id="tab-home" class="tab active">
+      <!-- 第 1 步：API Key 与模型（首屏最显眼位置） -->
+      <div class="card hero-card">
+        <div class="card-head">
+          <div class="step-title"><span class="step-num">1</span> 填写 API Key 与选择模型</div>
+          <div class="presets">
+            <span class="muted">对话模型预设：</span>
+            <button class="chip" onclick="applyLlmPreset('deepseek')">DeepSeek</button>
+            <button class="chip" onclick="applyLlmPreset('qwen')">通义千问</button>
+            <button class="chip" onclick="applyLlmPreset('openai')">OpenAI</button>
+            <button class="chip" onclick="applyLlmPreset('ollama')">Ollama 本地</button>
+          </div>
+        </div>
+
+        <div class="key-grid">
+          <!-- 对话模型 Key -->
+          <div class="key-box">
+            <div class="key-box-head">
+              <span class="key-label">🧠 对话模型 API Key <em class="req">必填（本地模型除外）</em></span>
+              <button class="btn tiny primary" onclick="testLLM()">测试连通</button>
+            </div>
+            <div class="row-gap">
+              <input id="llm_api_key" type="password" placeholder="粘贴你的 DeepSeek / OpenAI / 通义千问 API Key（sk-...）">
+              <button class="btn tiny secondary" onclick="togglePwd('llm_api_key')" title="显示/隐藏">👁</button>
+            </div>
+            <div class="row-gap sub-row">
+              <input id="llm_model" type="text" placeholder="模型名，如 deepseek-chat" style="max-width:210px;">
+              <input id="llm_base_url" type="text" placeholder="接口地址，如 https://api.deepseek.com/v1">
+            </div>
+          </div>
+
+          <!-- 语音 TTS Key -->
+          <div class="key-box">
+            <div class="key-box-head">
+              <span class="key-label">🔊 语音合成（TTS） <em class="free">默认免费免 Key</em></span>
+              <button class="btn tiny primary" onclick="testTTS()">🔊 试听</button>
+            </div>
+            <div class="row-gap">
+              <select id="tts_provider" onchange="updateTtsHints()" style="max-width:220px;">
+                <option value="edge">edge-tts（免费免 Key）</option>
+                <option value="cosyvoice">阿里云百炼 CosyVoice</option>
+                <option value="openai">OpenAI 兼容 TTS</option>
+                <option value="sapi">Windows 本地离线语音</option>
+              </select>
+              <input id="tts_api_key" type="password" placeholder="选免费 edge-tts 时这里留空即可；百炼/OpenAI 填 Key">
+              <button class="btn tiny secondary" onclick="togglePwd('tts_api_key')" title="显示/隐藏">👁</button>
+            </div>
+            <div class="row-gap sub-row">
+              <input id="tts_voice" type="text" list="edge-voices" placeholder="音色，如 zh-CN-XiaoxiaoNeural" style="max-width:220px;">
+              <input id="tts_model" type="text" placeholder="模型名（百炼填 cosyvoice-v2，edge-tts 可留空）">
+              <datalist id="edge-voices">
+                <option value="zh-CN-XiaoxiaoNeural">晓晓（女声·自然）</option>
+                <option value="zh-CN-XiaoyiNeural">晓伊（女声·活泼）</option>
+                <option value="zh-CN-YunxiNeural">云希（男声·阳光）</option>
+                <option value="zh-CN-YunyangNeural">云扬（男声·播音）</option>
+                <option value="longxiaochun_v2">百炼 CosyVoice · 龙小淳</option>
+                <option value="alloy">OpenAI · alloy</option>
+              </datalist>
+            </div>
+          </div>
+
+          <!-- AI 画室 Key（可选） -->
+          <div class="key-box full-span">
+            <div class="key-box-head">
+              <span class="key-label">🎨 AI 画室 API Key <em class="opt">选填（开启 AI 画室时才需要）</em></span>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <label class="inline-mini"><input id="draw_reuse_tts_key" type="checkbox"> 留空时复用上方百炼 Key</label>
+                <button class="btn tiny secondary" onclick="testDraw()">测试出图</button>
+              </div>
+            </div>
+            <div class="row-gap">
+              <select id="draw_provider" style="max-width:200px;">
+                <option value="wanx">阿里云通义万相（Wanx）</option>
+                <option value="openai">OpenAI 兼容文生图</option>
+              </select>
+              <input id="draw_api_key" type="password" placeholder="画室 API Key（同用阿里云百炼可留空自动复用）">
+              <button class="btn tiny secondary" onclick="togglePwd('draw_api_key')">👁</button>
+              <input id="draw_model" type="text" placeholder="模型，如 wanx2.1-t2i-turbo" style="max-width:200px;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 第 2 步：填写直播间 & 独立功能开关 -->
+      <div class="card">
+        <div class="card-head">
+          <div class="step-title"><span class="step-num">2</span> 填写直播间 & 勾选要开启的功能</div>
+          <span class="muted">每个模块都可以单独启停 · 改完自动生效</span>
+        </div>
+
+        <!-- 直播间快捷输入行 -->
+        <div class="room-quick">
+          <div class="room-item">
+            <div class="room-head">
+              <label class="room-title">💬 抖音直播间</label>
+              <span class="mod-state" id="st-douyin">未启动</span>
+              <label class="switch"><input type="checkbox" data-feature="douyin"><span class="slider"></span></label>
+            </div>
+            <input id="dy_room_url" type="text" placeholder="填抖音房间号或链接，如 https://live.douyin.com/123456">
+            <div class="mini-hint">开启后会弹出网页版直播间窗口自动抓弹幕/礼物，首次若需登录或过验证码直接在窗口操作。</div>
+          </div>
+
+          <div class="room-item">
+            <div class="room-head">
+              <label class="room-title">📺 B站直播间</label>
+              <span class="mod-state" id="st-bilibili">未启动</span>
+              <label class="switch"><input type="checkbox" data-feature="bilibili"><span class="slider"></span></label>
+            </div>
+            <input id="bili_room_id" type="text" placeholder="填 B站直播间房间号，如 123456">
+            <div class="mini-hint">打开 B站网页版直播间截获弹幕与礼物，首次使用在弹出窗口扫码登录一次即可记住状态。</div>
+          </div>
+        </div>
+
+        <!-- 其余 6 个独立功能小卡片 -->
+        <div class="mod-grid">
+          <div class="mod-mini">
+            <div class="mod-top">
+              <div><div class="mod-name">🎙️ AI 语音聊天</div><span class="mod-state" id="st-chat">已开启</span></div>
+              <label class="switch"><input type="checkbox" data-feature="chat"><span class="slider"></span></label>
+            </div>
+            <div class="mod-desc">弹幕自动交给大模型回复并语音播报</div>
+          </div>
+
+          <div class="mod-mini">
+            <div class="mod-top">
+              <div><div class="mod-name">🎁 礼物答谢 & 榜单</div><span class="mod-state" id="st-gift">已开启</span></div>
+              <label class="switch"><input type="checkbox" data-feature="gift"><span class="slider"></span></label>
+            </div>
+            <div class="mod-desc">实时统计本场礼物榜并自动语音答谢</div>
+          </div>
+
+          <div class="mod-mini">
+            <div class="mod-top">
+              <div><div class="mod-name">🎵 本地曲库点歌</div><span class="mod-state" id="st-music">未启动</span></div>
+              <label class="switch"><input type="checkbox" data-feature="music"><span class="slider"></span></label>
+            </div>
+            <div class="mod-desc">把歌放到项目 <code>music/</code> 目录，发「点歌 歌名」即播</div>
+          </div>
+
+          <div class="mod-mini">
+            <div class="mod-top">
+              <div><div class="mod-name">🎨 AI 画室</div><span class="mod-state" id="st-draw">未启动</span></div>
+              <label class="switch"><input type="checkbox" data-feature="draw"><span class="slider"></span></label>
+            </div>
+            <div class="mod-desc">观众发「画 XXX」自动出图推到 OBS 画板</div>
+          </div>
+
+          <div class="mod-mini">
+            <div class="mod-top">
+              <div><div class="mod-name">🐟 皮套接口（VTS）</div><span class="mod-state" id="st-vts">未连接</span></div>
+              <label class="switch"><input type="checkbox" data-feature="vts"><span class="slider"></span></label>
+            </div>
+            <div class="mod-desc">连本地 VTube Studio 驱动口型（B站搜蓝色大肥鱼开源皮套自备）</div>
+          </div>
+
+          <div class="mod-mini">
+            <div class="mod-top">
+              <div><div class="mod-name">🖥️ OBS 舞台推送</div><span class="mod-state" id="st-obs_stage">已开启</span></div>
+              <label class="switch"><input type="checkbox" data-feature="obs_stage"><span class="slider"></span></label>
+            </div>
+            <div class="mod-desc">推送弹幕板、字幕、礼物榜、点歌单与画室到 OBS</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 第 3 步：超大号一键开播 + 快速试一句 -->
+      <div class="launch-bar">
+        <div class="quick-test">
+          <input id="quick_test_text" type="text" value="你好呀，自我介绍一下吧！" placeholder="不开播也能先发一句测试弹幕...">
+          <button class="btn secondary" onclick="sendQuickTest()">💬 模拟发一条弹幕测试</button>
+        </div>
+        <button id="btnLive" class="btn hero-live" onclick="toggleLive()">🚀 保存并一键开播</button>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: 高级配置 ==================== -->
+    <section id="tab-advanced" class="tab">
+      <div class="card">
+        <h3>🧠 主播人设与对话记忆</h3>
+        <div class="form-grid">
+          <label>主播昵称
+            <input id="streamer_name" type="text" placeholder="大肥鱼AI">
+          </label>
+          <label>弹幕回复冷却（秒）
+            <input id="reply_cooldown_sec" type="number" step="0.5" min="0">
+          </label>
+          <label class="full">主播人设提示词（System Prompt）
+            <textarea id="streamer_persona" rows="3"></textarea>
+          </label>
+          <label class="inline-check">
+            <input id="llm_memory_enable" type="checkbox"> 开启短期上下文记忆（保留最近 <input id="llm_memory_turns" type="number" min="1" max="30" class="mini-num"> 轮）
+          </label>
+          <div style="text-align:right">
+            <button class="btn small secondary" onclick="clearMemory()">清空当前记忆</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🔊 TTS 与 AI 画室进阶参数</h3>
+        <div class="form-grid">
+          <label>edge-tts 语速（如 +5% / -10%）
+            <input id="tts_rate" type="text" placeholder="+5%">
+          </label>
+          <label>OpenAI 兼容 TTS Base URL（仅选 OpenAI TTS 时填写）
+            <input id="tts_base_url" type="text" placeholder="https://api.openai.com/v1">
+          </label>
+          <label>AI 画室 API Base URL
+            <input id="draw_base_url" type="text" placeholder="https://dashscope.aliyuncs.com/api/v1">
+          </label>
+          <label>AI 画室默认画风后缀
+            <input id="draw_style_prompt" type="text" placeholder="二次元插画风格，精致细节">
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>🎵 本地曲库 & 采集浏览器</h3>
+          <div style="display:flex;gap:8px;">
+            <button class="btn small secondary" onclick="scanMusic()">🔄 重新扫描曲库</button>
+            <button class="btn small secondary" onclick="skipMusic()">⏭ 切歌</button>
+          </div>
+        </div>
+        <div class="form-grid">
+          <label class="full">本地曲库目录（每行一个，默认 <code>music</code> 为项目内置文件夹）
+            <textarea id="music_dirs" rows="2"></textarea>
+          </label>
+          <label>正常播放音量（0 ~ 1）
+            <input id="music_volume" type="number" step="0.05" min="0" max="1">
+          </label>
+          <label>说话时压低音量（Ducking）
+            <input id="music_duck_volume" type="number" step="0.02" min="0" max="1">
+          </label>
+          <label class="inline-check">
+            <input id="music_auto_next" type="checkbox"> 空闲时自动随机播放本地曲库
+          </label>
+          <label class="inline-check">
+            <input id="dy_headless" type="checkbox"> 抖音采集后台隐藏窗口（首次建议不勾）
+          </label>
+          <label class="inline-check">
+            <input id="bili_headless" type="checkbox"> B站采集后台隐藏窗口（首次建议不勾）
+          </label>
+          <label>自定义浏览器路径（留空自动探测 Chrome / Edge）
+            <input id="browser_path" type="text" placeholder="留空自动识别">
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>🐟 VTube Studio 皮套接口 & 🎁 礼物答谢</h3>
+          <button class="btn small secondary" onclick="resetGifts()">重置本场礼物榜</button>
+        </div>
+        <div class="form-grid">
+          <label>VTS 主机地址
+            <input id="vts_host" type="text" placeholder="127.0.0.1">
+          </label>
+          <label>VTS API 端口（默认 8001）
+            <input id="vts_port" type="number" placeholder="8001">
+          </label>
+          <label>口型参数名（默认 MouthOpen）
+            <input id="vts_mouth_param" type="text" placeholder="MouthOpen">
+          </label>
+          <label>固定答谢模板（支持 {user} {gift} {count}）
+            <input id="gift_template" type="text">
+          </label>
+          <label class="inline-check">
+            <input id="gift_thank_enable" type="checkbox"> 收到礼物时语音答谢
+          </label>
+          <label class="inline-check">
+            <input id="gift_use_llm" type="checkbox"> 用大模型自由生成答谢语
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: OBS 舞台 ==================== -->
+    <section id="tab-obs" class="tab">
+      <div class="card">
+        <h3>🖥️ OBS 透明浏览器源地址</h3>
+        <p class="muted" style="margin-bottom:14px;">在 OBS 中添加「浏览器」源并粘贴下方地址即可，背景默认全透明。皮套请到 B站搜索「蓝色大肥鱼开源皮套」自备并配合 VTube Studio / 桌宠使用。</p>
+        <div class="obs-list" id="obsList"></div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 4: 测试台 & 日志 ==================== -->
+    <section id="tab-sandbox" class="tab">
+      <div class="card">
+        <h3>🧪 模拟直播间事件</h3>
+        <div class="row-gap">
+          <input id="sim_user" type="text" value="热心观众" style="max-width:140px" placeholder="观众昵称">
+          <input id="sim_text" type="text" value="主播你好呀，今天心情怎么样？" placeholder="输入弹幕（如：点歌 稻香 / 画 一只小猫）">
+          <button class="btn primary" onclick="sendSimComment()">发送弹幕</button>
+        </div>
+        <div class="row-gap" style="margin-top:10px;">
+          <input id="sim_gift_user" type="text" value="榜一大哥" style="max-width:140px" placeholder="送礼人">
+          <input id="sim_gift_name" type="text" value="小火箭" style="max-width:180px" placeholder="礼物名称">
+          <input id="sim_gift_count" type="number" value="1" min="1" style="max-width:90px">
+          <button class="btn secondary" onclick="sendSimGift()">🎁 模拟送礼</button>
+          <button class="btn secondary" onclick="testTTS()">🔊 直接试播语音</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>📜 实时运行日志</h3>
+          <span id="logCount" class="muted">0 条</span>
+        </div>
+        <div id="logBox" class="log-box"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="/ui/app.js"></script>
+</body>
+</html>

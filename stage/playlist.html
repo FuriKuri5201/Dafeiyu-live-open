@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>OBS 点歌单</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100%; overflow: hidden;
+    background: transparent;
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    padding: 14px;
+  }
+  .card {
+    background: rgba(12, 16, 30, 0.82);
+    border: 1.5px solid rgba(52, 211, 153, 0.5);
+    border-radius: 16px; padding: 16px 18px; color: #f8fafc;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+  }
+  .title { font-size: 18px; font-weight: 800; color: #34d399; margin-bottom: 8px; }
+  .now { font-size: 20px; font-weight: 700; margin-bottom: 10px; color: #fff; }
+  .sub { font-size: 13px; color: #94a3b8; margin-bottom: 8px; }
+  .q-item { font-size: 15px; padding: 4px 0; color: #cbd5e1; border-top: 1px dashed rgba(255,255,255,0.1); }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="title">🎵 点歌台 · 弹幕发「点歌 歌名」</div>
+  <div id="now" class="now">当前空闲</div>
+  <div id="req" class="sub"></div>
+  <div id="queue"></div>
+</div>
+<script>
+const nowEl = document.getElementById('now');
+const reqEl = document.getElementById('req');
+const qEl = document.getElementById('queue');
+
+function render(msg) {
+  if (msg.current) {
+    nowEl.textContent = '▶ ' + msg.current.label;
+    reqEl.textContent = '点歌人：' + (msg.current.requester || '自动电台');
+  } else {
+    nowEl.textContent = '当前未播放歌曲';
+    reqEl.textContent = '';
+  }
+  const q = msg.queue || [];
+  qEl.innerHTML = q.slice(0, 5).map((item, i) => `<div class="q-item">${i + 1}. </div>`).join('');
+  [...qEl.querySelectorAll('.q-item')].forEach((el, i) => {
+    el.textContent = `${i + 1}. ${q[i].label} (${q[i].requester})`;
+  });
+}
+
+function connect() {
+  const ws = new WebSocket(`ws://${location.host}/ws`);
+  ws.onmessage = (ev) => {
+    try {
+      const msg = JSON.parse(ev.data);
+      if (msg.type === 'music') render(msg);
+    } catch {}
+  };
+  ws.onclose = () => setTimeout(connect, 2000);
+}
+connect();
+</script>
+</body>
+</html>

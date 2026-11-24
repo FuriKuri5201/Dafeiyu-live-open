@@ -1,0 +1,104 @@
+{
+  "server": {
+    "host": "127.0.0.1",
+    "port": 18787
+  },
+  "streamer": {
+    "name": "大肥鱼AI",
+    "persona": "你是一位幽默风趣、反应机灵、说话自然口语化的直播间 AI 主播。回复观众弹幕简短有趣（1~2 句话，20~45 字左右），不要使用 Markdown 或列表符号，不要念表情符号。",
+    "idle_chat_enable": false,
+    "idle_interval_sec": 60,
+    "reply_cooldown_sec": 3.0
+  },
+  "features": {
+    "douyin": false,
+    "bilibili": false,
+    "chat": true,
+    "gift": true,
+    "music": true,
+    "draw": false,
+    "vts": false,
+    "obs_stage": true
+  },
+  "llm": {
+    "provider": "openai_compatible",
+    "base_url": "https://api.deepseek.com/v1",
+    "api_key": "",
+    "model": "deepseek-chat",
+    "temperature": 0.85,
+    "max_tokens": 120,
+    "memory_enable": true,
+    "memory_turns": 12
+  },
+  "tts": {
+    "provider": "edge",
+    "api_key": "",
+    "base_url": "",
+    "model": "",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+5%",
+    "volume": "+0%",
+    "pitch": "+0Hz",
+    "cosy_model": "cosyvoice-v2",
+    "cosy_voice": "longxiaochun_v2",
+    "openai_model": "tts-1",
+    "openai_voice": "alloy"
+  },
+  "collectors": {
+    "browser_path": "",
+    "douyin": {
+      "room_url": "",
+      "headless": false,
+      "profile_dir": "profiles/douyin"
+    },
+    "bilibili": {
+      "room_id": "",
+      "headless": false,
+      "profile_dir": "profiles/bilibili"
+    }
+  },
+  "gift": {
+    "thank_enable": true,
+    "thank_template": "谢谢{user}送的{count}个{gift}，太爱你啦！",
+    "use_llm_thank": false
+  },
+  "music": {
+    "dirs": [
+      "music"
+    ],
+    "volume": 0.45,
+    "duck_volume": 0.14,
+    "auto_next": true,
+    "trigger_prefixes": [
+      "点歌",
+      "来首",
+      "放首",
+      "播放"
+    ],
+    "skip_keywords": [
+      "切歌",
+      "下一首"
+    ]
+  },
+  "draw": {
+    "provider": "wanx",
+    "base_url": "https://dashscope.aliyuncs.com/api/v1",
+    "api_key": "",
+    "reuse_tts_key": true,
+    "model": "wanx2.1-t2i-turbo",
+    "size": "1024*1024",
+    "style_prompt": "二次元插画风格，精致细节，明快配色",
+    "trigger_prefixes": [
+      "画",
+      "画一个",
+      "画一只",
+      "帮我画"
+    ],
+    "cooldown_sec": 15
+  },
+  "vts": {
+    "host": "127.0.0.1",
+    "port": 8001,
+    "mouth_param": "MouthOpen"
+  }
+}
