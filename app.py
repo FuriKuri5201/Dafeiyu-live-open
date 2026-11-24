@@ -89,7 +89,7 @@ def main() -> None:
             width=1220,
             height=800,
             min_size=(960, 660),
-            background_color="#0b0f1d",
+            background_color="#121214",
         )
         webview.start()
     except ImportError:

@@ -34,6 +34,19 @@ function togglePwd(id) {
   el.type = el.type === 'password' ? 'text' : 'password';
 }
 
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light');
+  localStorage.setItem('dfyzb_theme', isLight ? 'light' : 'dark');
+  const btn = $('btnTheme');
+  if (btn) btn.textContent = isLight ? '🌙' : '☀️';
+}
+
+if (localStorage.getItem('dfyzb_theme') === 'light') {
+  document.body.classList.add('light');
+  const btn = $('btnTheme');
+  if (btn) btn.textContent = '🌙';
+}
+
 function applyLlmPreset(name) {
   const presets = {
     deepseek: { base: 'https://api.deepseek.com/v1', model: 'deepseek-chat' },
