@@ -1,21 +1,30 @@
-MIT License
+# 开源与非商业使用许可协议（CC BY-NC-SA 4.0）
 
-Copyright (c) 2026 DFYZB Open-Source Contributors
+版权所有 © 2026 鲶鱼大帝之大肥鱼一键开播助手（FuriKuri5201）
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+本项目采用 **知识共享 署名-非商业性使用-相同方式共享 4.0 国际许可协议（Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International, CC BY-NC-SA 4.0）** 发布。
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+协议全文：https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+---
+
+## 你可以自由地（允许）：
+
+1. **个人使用**：免费下载、安装并用于个人学习、测试与个人直播间开播。
+2. **魔改与二次开发**：自由阅读、修改、扩展源码，打造自己的定制版本。
+3. **非商业分享**：在保留原作者署名与原项目链接的前提下，免费分享本项目或你的修改版本。
+
+## 你必须遵守以下条件（限制）：
+
+1. **署名（BY）**：必须保留原作者版权声明、项目名称与原仓库链接，并注明是否对原代码进行了修改。
+2. **禁止商业用途（NC）**：**严禁**将本项目或其衍生修改版本用于任何商业盈利目的，包括但不限于：
+   - 在淘宝、闲鱼、拼多多、小红书、微信群等渠道倒卖源码、一键整合包或安装包；
+   - 将本项目打包进商业软件、付费 SaaS 服务或付费课程进行售卖；
+   - 未经原作者书面授权，以本项目为核心提供有偿代部署、有偿定制或商业分发。
+3. **相同方式共享（SA）**：如果你基于本项目进行了二次修改并公开发布，修改后的衍生版本必须继续采用本协议（CC BY-NC-SA 4.0）免费开源，不得转为闭源或商用协议。
+
+## 免责声明
+
+本软件按“现状”提供，不附带任何明示或暗示的担保。因使用或修改本软件产生的任何风险或损失由使用者自行承担。
+
+如需商业授权，请联系原作者获取书面许可。
